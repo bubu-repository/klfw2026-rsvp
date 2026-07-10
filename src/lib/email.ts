@@ -184,6 +184,17 @@ export async function sendTicketEmail(guest: Guest): Promise<EmailOutcome> {
       return "sent";
     }
 
+    // Production has no writable/persistent filesystem (Vercel is read-only),
+    // so the dev outbox only makes sense locally. Without a Resend key in
+    // production we simply skip email; the guest still gets their ticket on
+    // the confirmation screen and at /ticket/[hash].
+    if (process.env.NODE_ENV === "production") {
+      console.warn(
+        `[email] No RESEND_API_KEY in production. Skipping email for ${guest.email}; ticket is still available on screen.`
+      );
+      return "failed";
+    }
+
     const outbox = path.join(process.cwd(), ".dev-data", "outbox");
     await fs.mkdir(outbox, { recursive: true });
     const stamp = new Date().toISOString().replace(/[:.]/g, "-");

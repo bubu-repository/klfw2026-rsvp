@@ -1,7 +1,9 @@
 -- Guests table: one row per RSVP, one ticket per guest.
+-- Safe to run more than once: every statement guards against re-creation,
+-- so pasting this whole file into the Supabase SQL editor is idempotent.
 create extension if not exists pgcrypto;
 
-create table public.guests (
+create table if not exists public.guests (
   id uuid primary key default gen_random_uuid(),
   name text not null check (char_length(name) between 1 and 120),
   email text not null check (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
@@ -12,9 +14,9 @@ create table public.guests (
 );
 
 -- One RSVP per email address.
-create unique index guests_email_unique on public.guests (lower(email));
+create unique index if not exists guests_email_unique on public.guests (lower(email));
 -- Scanner looks tickets up by hash constantly on event day.
-create index guests_ticket_hash_idx on public.guests (ticket_hash);
+create index if not exists guests_ticket_hash_idx on public.guests (ticket_hash);
 
 -- Lock the table down: the browser never talks to it directly.
 -- All reads/writes go through Next.js route handlers using the
