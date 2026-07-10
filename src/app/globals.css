@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-klfw: #1d2bf0;
+  --color-paper: #fafaf8;
+  --font-display: var(--font-anton);
+  --font-body: var(--font-archivo);
+}
+
+body {
+  background: var(--color-paper);
+  color: #111;
+}
+
+/* Condensed poster display type, tightened like the KLFW poster */
+.display {
+  font-family: var(--font-anton);
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+}
+
+/* Small bold caption labels, as on the poster info columns */
+.label {
+  font-family: var(--font-archivo);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+}
+
+/* Subtle halftone dot texture from the poster edges */
+.halftone {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.09) 1px, transparent 1px);
+  background-size: 11px 11px;
+}
+
+/* Blurred gray figure, abstracted from the poster silhouette */
+.blur-figure {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(48px);
+  pointer-events: none;
+}
+
+input.klfw-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #1d2bf0;
+  padding: 0.6rem 0;
+  font-size: 1.05rem;
+  border-radius: 0;
+}
+
+input.klfw-input:focus {
+  outline: none;
+  border-bottom-width: 3px;
+}
+
+input.klfw-input::placeholder {
+  color: #9ca3af;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}
+
+::selection {
+  background: #1d2bf0;
+  color: #ffffff;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #1d2bf0;
+  outline-offset: 2px;
+}
+
+/* Scanner result overlay: quick pop so the verdict reads instantly */
+@keyframes overlay-pop {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.overlay-pop {
+  animation: overlay-pop 140ms ease-out;
+}
