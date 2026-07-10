@@ -3,7 +3,7 @@ import RsvpForm from "@/components/RsvpForm";
 
 export default function EventPage() {
   return (
-    <main className="relative mx-auto min-h-screen max-w-3xl overflow-hidden px-7 pb-24 pt-16 sm:px-12 sm:pt-20">
+    <main className="relative mx-auto min-h-screen max-w-3xl overflow-hidden px-6 pb-20 pt-14 sm:px-12 sm:pb-24 sm:pt-20">
       {/* Blurred figure, abstracted from the poster */}
       <div
         aria-hidden
@@ -20,7 +20,7 @@ export default function EventPage() {
 
       {/* Headline block */}
       <header className="relative">
-        <h1 className="display text-klfw flex flex-col gap-[1.6vw] text-[10.5vw] leading-none sm:gap-3 sm:text-[4.9rem]">
+        <h1 className="display text-klfw flex flex-col gap-2 text-[clamp(2.4rem,10vw,4.9rem)] leading-none sm:gap-3">
           <span className="flex justify-between">
             <span>Kuala</span>
             <span>Lumpur</span>
@@ -33,10 +33,10 @@ export default function EventPage() {
           <span className="flex justify-between">
             <span>Cultured</span>
             <span>By</span>
+            <span>Todak</span>
           </span>
-          <span className="block text-right">Todak</span>
         </h1>
-        <p className="label text-klfw mt-10 text-right text-xs sm:text-sm">
+        <p className="label text-klfw mt-8 text-right text-xs sm:mt-10 sm:text-sm">
           Creative direction
           <br />
           by <span className="font-medium italic">Min Luna</span>
@@ -44,7 +44,7 @@ export default function EventPage() {
       </header>
 
       {/* Poster info columns */}
-      <section className="relative mt-20 grid grid-cols-2 gap-y-10 sm:mt-28">
+      <section className="relative mt-20 grid grid-cols-2 gap-x-6 gap-y-10 sm:mt-28">
         <p className="label text-klfw text-sm sm:text-base">
           Friday
           <br />
@@ -90,16 +90,18 @@ export default function EventPage() {
       </section>
 
       {/* Footer lockup */}
-      <footer className="border-klfw relative mt-24 flex items-end justify-between border-t-2 pt-6">
+      <footer className="border-klfw relative mt-24 flex items-center justify-between gap-4 border-t-2 pt-6">
         <Image
           src="/brand/klfw-blue.png"
           alt="Kuala Lumpur Fashion Week 2026"
-          width={110}
-          height={78}
+          width={72}
+          height={51}
+          className="h-auto w-[64px] sm:w-[72px]"
         />
         <p className="label text-klfw text-xs sm:text-sm">×</p>
-        <p className="display text-klfw text-xl sm:text-2xl">
-          Cultured <span className="align-middle text-sm">by</span> Todak
+        <p className="display text-klfw text-lg sm:text-xl">
+          Cultured <span className="align-middle text-xs sm:text-sm">by</span>{" "}
+          Todak
         </p>
       </footer>
     </main>

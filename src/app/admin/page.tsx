@@ -21,12 +21,13 @@ export default async function AdminPage() {
 
   if (!authed) {
     return (
-      <main className="mx-auto min-h-screen max-w-3xl px-6 pt-16 sm:px-10">
+      <main className="mx-auto min-h-screen max-w-3xl px-6 pt-14 sm:px-10 sm:pt-16">
         <Image
-          src="/brand/klfw-black.png"
+          src="/brand/klfw-blue.png"
           alt="Kuala Lumpur Fashion Week 2026"
-          width={160}
-          height={113}
+          width={150}
+          height={106}
+          className="h-auto w-[120px] sm:w-[150px]"
           priority
         />
         <h1 className="display text-klfw mt-8 text-5xl sm:text-6xl">
@@ -47,13 +48,14 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-5xl px-6 pb-20 pt-10 sm:px-10">
-      <header className="flex flex-wrap items-start justify-between gap-6">
+      <header className="flex flex-wrap items-center justify-between gap-6">
         <div>
           <Image
-            src="/brand/klfw-black.png"
+            src="/brand/klfw-blue.png"
             alt="Kuala Lumpur Fashion Week 2026"
             width={120}
             height={85}
+            className="h-auto w-[100px] sm:w-[120px]"
             priority
           />
           <h1 className="display text-klfw mt-4 text-5xl sm:text-6xl">
@@ -64,19 +66,23 @@ export default async function AdminPage() {
       </header>
 
       <section className="border-klfw mt-10 grid grid-cols-3 border-2">
-        <div className="border-klfw border-r-2 p-4">
-          <p className="label text-xs text-neutral-500">RSVPs</p>
-          <p className="display text-klfw text-4xl sm:text-5xl">
+        <div className="border-klfw border-r-2 p-3 sm:p-4">
+          <p className="label text-[11px] text-neutral-500 sm:text-xs">RSVPs</p>
+          <p className="display text-klfw text-3xl sm:text-5xl">
             {guests.length}
           </p>
         </div>
-        <div className="border-klfw border-r-2 p-4">
-          <p className="label text-xs text-neutral-500">Checked in</p>
-          <p className="display text-klfw text-4xl sm:text-5xl">{checkedIn}</p>
+        <div className="border-klfw border-r-2 p-3 sm:p-4">
+          <p className="label text-[11px] text-neutral-500 sm:text-xs">
+            Checked in
+          </p>
+          <p className="display text-klfw text-3xl sm:text-5xl">{checkedIn}</p>
         </div>
-        <div className="p-4">
-          <p className="label text-xs text-neutral-500">Remaining</p>
-          <p className="display text-klfw text-4xl sm:text-5xl">
+        <div className="p-3 sm:p-4">
+          <p className="label text-[11px] text-neutral-500 sm:text-xs">
+            Remaining
+          </p>
+          <p className="display text-klfw text-3xl sm:text-5xl">
             {guests.length - checkedIn}
           </p>
         </div>
@@ -85,7 +91,7 @@ export default async function AdminPage() {
       <div className="mt-8">
         <Link
           href="/admin/scan"
-          className="display bg-klfw inline-block px-8 py-4 text-2xl text-white transition-opacity hover:opacity-90"
+          className="display bg-klfw inline-block w-full px-8 py-4 text-center text-2xl text-white transition-opacity hover:opacity-90 sm:w-auto sm:text-left"
         >
           Scan tickets
         </Link>
