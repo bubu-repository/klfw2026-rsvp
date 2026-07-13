@@ -118,6 +118,11 @@ export default function TicketScanner() {
           >
             {state.kind === "result" ? (
               <>
+                {state.result.guest_category === "vip" && (
+                  <p className="display bg-black px-6 py-2 text-3xl text-white">
+                    VIP
+                  </p>
+                )}
                 <p className="display text-4xl text-white">
                   {state.result.status === "checked_in" && "Checked in"}
                   {state.result.status === "already_checked_in" &&
@@ -127,6 +132,12 @@ export default function TicketScanner() {
                 {state.result.guest_name && (
                   <p className="label text-sm text-white">
                     {state.result.guest_name}
+                  </p>
+                )}
+                {state.result.status !== "not_found" && (
+                  <p className="label text-xs text-white/80">
+                    After party:{" "}
+                    {state.result.after_party ? "Yes" : "No"}
                   </p>
                 )}
                 {state.result.status === "already_checked_in" &&

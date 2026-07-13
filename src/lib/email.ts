@@ -17,20 +17,32 @@ function fromAddress(): string {
   );
 }
 
-// Event window: registration 5.00 PM to estimated end 9.00 PM MYT (UTC+8),
-// i.e. 2026-08-07 09:00Z to 13:00Z.
+// Event window: registration 5.00 PM MYT (UTC+8). Runway guests are booked
+// to 9.00 PM; guests staying for the after party (7.00-10.00 PM) to 10.00 PM.
 const EVENT_START_UTC = "20260807T090000Z";
 const EVENT_END_UTC = "20260807T130000Z";
+const EVENT_END_AFTER_PARTY_UTC = "20260807T140000Z";
 const EVENT_TITLE = "KLFW 2026 x Cultured by Todak";
-const EVENT_LOCATION = "Esplanade, KLCC Park, Kuala Lumpur";
+const EVENT_LOCATION = "Level 3, Isetan KLCC, Kuala Lumpur";
 
-function googleCalendarUrl(ticketUrl: string): string {
+function eventEnd(guest: Guest): string {
+  return guest.attending_after_party ? EVENT_END_AFTER_PARTY_UTC : EVENT_END_UTC;
+}
+
+function eventDetails(guest: Guest, ticketUrl: string): string {
+  const afterParty = guest.attending_after_party
+    ? " After party ft. Juju 7.00-10.00 PM."
+    : "";
+  return `Collection 1.0 "Battlescars". Registration 5.00 PM, runway show 6.00 PM.${afterParty} Invitation only.\nYour ticket: ${ticketUrl}`;
+}
+
+function googleCalendarUrl(guest: Guest, ticketUrl: string): string {
   const p = new URLSearchParams({
     action: "TEMPLATE",
     text: EVENT_TITLE,
-    dates: `${EVENT_START_UTC}/${EVENT_END_UTC}`,
+    dates: `${EVENT_START_UTC}/${eventEnd(guest)}`,
     location: EVENT_LOCATION,
-    details: `Collection 1.0 "Battlescars". Registration 5.00 PM, runway show 6.00 PM. Invitation only.\nYour ticket: ${ticketUrl}`,
+    details: eventDetails(guest, ticketUrl),
   });
   return `https://calendar.google.com/calendar/render?${p.toString()}`;
 }
@@ -46,10 +58,10 @@ function icsFile(guest: Guest, ticketUrl: string): string {
     `UID:${guest.ticket_hash}@klfw2026-todak`,
     `DTSTAMP:${stamp}`,
     `DTSTART:${EVENT_START_UTC}`,
-    `DTEND:${EVENT_END_UTC}`,
+    `DTEND:${eventEnd(guest)}`,
     `SUMMARY:${EVENT_TITLE}`,
     `LOCATION:${EVENT_LOCATION}`,
-    `DESCRIPTION:Collection 1.0 "Battlescars". Registration 5.00 PM\\, runway show 6.00 PM. Invitation only. Your ticket: ${ticketUrl}`,
+    `DESCRIPTION:${eventDetails(guest, ticketUrl).replace(/,/g, "\\,").replace(/\n/g, "\\n")}`,
     `URL:${ticketUrl}`,
     "BEGIN:VALARM",
     "TRIGGER:-PT2H",
@@ -82,6 +94,11 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
         </tr>
         <tr>
           <td style="padding:28px 24px 8px;" align="center">
+            ${
+              guest.category === "vip"
+                ? `<p style="${label}display:inline-block;background:#000000;color:#ffffff;font-size:14px;letter-spacing:3px;padding:6px 22px;margin:0 0 10px;">VIP</p>`
+                : ""
+            }
             <p style="${label}color:#1d2bf0;font-size:13px;margin:0;">You are on the list</p>
             <h1 style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#1d2bf0;font-size:26px;line-height:1.1;text-transform:uppercase;margin:10px 0 4px;">${guest.name}</h1>
             <p style="${label}color:#888888;font-size:11px;margin:0;">Ticket ${shortCode}</p>
@@ -103,7 +120,7 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
                 </td>
                 <td align="right" style="padding:16px 0 0;">
                   <p style="${label}color:#888888;font-size:10px;margin:0;">Venue</p>
-                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">Esplanade, KLCC Park</p>
+                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">Level 3, Isetan KLCC</p>
                 </td>
               </tr>
               <tr>
@@ -116,6 +133,20 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
                   <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">6.00 PM</p>
                 </td>
               </tr>
+              <tr>
+                <td style="padding:12px 0 0;">
+                  <p style="${label}color:#888888;font-size:10px;margin:0;">After party ft. Juju</p>
+                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">${
+                    guest.attending_after_party
+                      ? "Yes · 7.00–10.00 PM"
+                      : "Not attending"
+                  }</p>
+                </td>
+                <td align="right" style="padding:12px 0 0;">
+                  <p style="${label}color:#888888;font-size:10px;margin:0;">Company</p>
+                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">${guest.company ?? "—"}</p>
+                </td>
+              </tr>
             </table>
           </td>
         </tr>
@@ -126,7 +157,7 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
         </tr>
         <tr>
           <td align="center" style="padding:0 24px 28px;">
-            <a href="${googleCalendarUrl(ticketUrl)}" style="${label}display:inline-block;border:2px solid #1d2bf0;color:#1d2bf0;font-size:12px;text-decoration:none;padding:11px 22px;">Add to Google Calendar</a>
+            <a href="${googleCalendarUrl(guest, ticketUrl)}" style="${label}display:inline-block;border:2px solid #1d2bf0;color:#1d2bf0;font-size:12px;text-decoration:none;padding:11px 22px;">Add to Google Calendar</a>
             <p style="${label}color:#888888;font-size:9px;margin:10px 0 0;">Apple or Outlook calendar: open the attached klfw2026.ics</p>
           </td>
         </tr>

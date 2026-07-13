@@ -53,6 +53,12 @@ export default async function TicketPage({
           </p>
         </header>
 
+        {guest.category === "vip" && (
+          <p className="display bg-black py-2 text-center text-2xl tracking-widest text-white">
+            VIP
+          </p>
+        )}
+
         <div className="px-5 py-8">
           <TicketQr value={guest.ticket_hash} guestName={guest.name} />
 
@@ -74,7 +80,7 @@ export default async function TicketPage({
           </div>
           <div className="text-right">
             <dt className="text-neutral-500">Venue</dt>
-            <dd>Esplanade, KLCC Park</dd>
+            <dd>Level 3, Isetan KLCC</dd>
           </div>
           <div>
             <dt className="text-neutral-500">Registration</dt>
@@ -84,6 +90,22 @@ export default async function TicketPage({
             <dt className="text-neutral-500">Runway show</dt>
             <dd>6.00 PM</dd>
           </div>
+          <div>
+            <dt className="text-neutral-500">After party</dt>
+            <dd>
+              {guest.attending_after_party
+                ? "Yes · 7.00 PM"
+                : "Not attending"}
+            </dd>
+          </div>
+          {guest.company ? (
+            <div className="text-right">
+              <dt className="text-neutral-500">Company</dt>
+              <dd className="break-words">{guest.company}</dd>
+            </div>
+          ) : (
+            <div />
+          )}
           <div>
             <dt className="text-neutral-500">Collection 1.0</dt>
             <dd>“Battlescars”</dd>

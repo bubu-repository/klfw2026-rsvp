@@ -26,10 +26,14 @@ export async function GET() {
     try {
       const sb = supabaseAdmin();
 
-      // Does the guests table exist and is it queryable with the given key?
+      // Does the guests table exist, with the 0002 columns (category, phone,
+      // after-party), and is it queryable with the given key?
       const table = await sb
         .from("guests")
-        .select("id", { count: "exact", head: true });
+        .select("id,category,phone,company,title,attending_after_party", {
+          count: "exact",
+          head: true,
+        });
       if (table.error) {
         database.error = `${table.error.code ?? ""} ${table.error.message}`.trim();
       } else {
@@ -66,8 +70,9 @@ export async function GET() {
     hint =
       "Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in your Vercel project, then redeploy.";
   } else if (!database.guestsTable || !database.checkInFunction) {
-    hint =
-      "Database is configured but the schema is missing. Run supabase/migrations/0001_create_guests.sql in the Supabase SQL editor.";
+    hint = /column|does not exist/i.test(database.error ?? "")
+      ? "Schema is outdated. Run supabase/migrations/0002_guest_details_and_vip.sql in the Supabase SQL editor."
+      : "Database is configured but the schema is missing. Run supabase/migrations/0001_create_guests.sql then 0002_guest_details_and_vip.sql in the Supabase SQL editor.";
   } else if (!env.ADMIN_PASSWORD) {
     hint = "Set ADMIN_PASSWORD in Vercel so organizers can log in to /admin.";
   } else {

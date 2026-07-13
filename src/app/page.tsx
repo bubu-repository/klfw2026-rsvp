@@ -36,11 +36,18 @@ export default function EventPage() {
             <span>Todak</span>
           </span>
         </h1>
-        <p className="label text-klfw mt-8 text-right text-xs sm:mt-10 sm:text-sm">
-          Creative direction
-          <br />
-          by <span className="font-medium italic">Min Luna</span>
-        </p>
+        <div className="mt-8 flex items-start justify-between gap-6 sm:mt-10">
+          <p className="label text-klfw text-xs sm:text-sm">
+            Born in esports
+            <br />
+            Built for culture
+          </p>
+          <p className="label text-klfw text-right text-xs sm:text-sm">
+            Creative direction
+            <br />
+            by <span className="font-medium italic">Min Luna</span>
+          </p>
+        </div>
       </header>
 
       {/* Poster info columns */}
@@ -61,9 +68,9 @@ export default function EventPage() {
           Registration
         </p>
         <p className="label text-klfw text-right text-sm sm:text-base">
-          Esplanade,
+          Level 3,
           <br />
-          KLCC Park
+          Isetan KLCC
         </p>
         <p className="label text-klfw text-sm sm:text-base">
           6.00 PM
@@ -71,6 +78,11 @@ export default function EventPage() {
           Runway show
         </p>
         <p className="label text-klfw text-right text-sm sm:text-base">
+          7.00 PM
+          <br />
+          After party <span className="font-medium italic">ft. Juju</span>
+        </p>
+        <p className="label text-klfw col-start-2 text-right text-sm sm:text-base">
           Invitation only
           <br />
           RSVP

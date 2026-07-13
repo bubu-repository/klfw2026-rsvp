@@ -10,16 +10,17 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   let hash = typeof body?.hash === "string" ? body.hash.trim().toLowerCase() : "";
 
+  const notFound = {
+    status: "not_found",
+    guest_name: null,
+    guest_email: null,
+    at: null,
+    guest_category: null,
+    after_party: null,
+  };
+
   if (!/^[0-9a-f]{6,64}$/.test(hash)) {
-    return NextResponse.json(
-      {
-        status: "not_found",
-        guest_name: null,
-        guest_email: null,
-        at: null,
-      },
-      { status: 200 }
-    );
+    return NextResponse.json(notFound, { status: 200 });
   }
 
   try {
@@ -27,12 +28,7 @@ export async function POST(req: Request) {
     if (hash.length !== 32) {
       const full = await resolveTicketPrefix(hash);
       if (!full) {
-        return NextResponse.json({
-          status: "not_found",
-          guest_name: null,
-          guest_email: null,
-          at: null,
-        });
+        return NextResponse.json(notFound);
       }
       hash = full;
     }

@@ -35,6 +35,15 @@ body {
   background-size: 11px 11px;
 }
 
+/* White-dot halftone for the blue VIP page */
+.halftone-light {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.16) 1px,
+    transparent 1px
+  );
+  background-size: 11px 11px;
+}
+
 /* Blurred gray figure, abstracted from the poster silhouette */
 .blur-figure {
   position: absolute;
@@ -43,7 +52,7 @@ body {
   pointer-events: none;
 }
 
-input.klfw-input {
+.klfw-input {
   width: 100%;
   background: transparent;
   border: 0;
@@ -51,18 +60,48 @@ input.klfw-input {
   padding: 0.6rem 0;
   font-size: 1.05rem;
   border-radius: 0;
+  color: inherit;
 }
 
-input.klfw-input:focus {
+.klfw-input:focus {
   outline: none;
   border-bottom-width: 3px;
 }
 
-input.klfw-input::placeholder {
+.klfw-input::placeholder {
   color: #9ca3af;
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 0.06em;
+}
+
+/* Native select styled to match the underline inputs */
+select.klfw-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231d2bf0' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.2rem center;
+  padding-right: 1.6rem;
+  cursor: pointer;
+}
+
+/* White-on-blue variant for the VIP page */
+.klfw-input--vip {
+  border-bottom-color: #ffffff;
+  color: #ffffff;
+}
+
+.klfw-input--vip::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+select.klfw-input--vip {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+select.klfw-input--vip option {
+  color: #111111;
+  background: #ffffff;
 }
 
 ::selection {

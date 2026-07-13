@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
 import { supabaseAdmin } from "./supabase";
-import type { Guest, CheckInResult } from "./types";
+import type { Guest, NewGuest, CheckInResult } from "./types";
 
 const hasSupabase = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -51,8 +51,7 @@ async function localWriteAll(guests: Guest[]): Promise<void> {
 // ---------- Public data-access API ----------
 
 export async function createGuest(
-  name: string,
-  email: string
+  input: NewGuest
 ): Promise<{ guest: Guest; existing: boolean }> {
   const ticket_hash = newTicketHash();
 
@@ -60,7 +59,7 @@ export async function createGuest(
     const sb = supabaseAdmin();
     const { data, error } = await sb
       .from("guests")
-      .insert({ name, email, ticket_hash })
+      .insert({ ...input, ticket_hash })
       .select()
       .single();
 
@@ -71,7 +70,7 @@ export async function createGuest(
       const { data: found, error: findErr } = await sb
         .from("guests")
         .select()
-        .ilike("email", email)
+        .ilike("email", input.email)
         .single();
       if (findErr || !found) throw new Error(findErr?.message ?? "Lookup failed");
       return { guest: found as Guest, existing: true };
@@ -82,14 +81,13 @@ export async function createGuest(
   warnLocal();
   const guests = await localReadAll();
   const existing = guests.find(
-    (g) => g.email.toLowerCase() === email.toLowerCase()
+    (g) => g.email.toLowerCase() === input.email.toLowerCase()
   );
   if (existing) return { guest: existing, existing: true };
 
   const guest: Guest = {
     id: crypto.randomUUID(),
-    name,
-    email,
+    ...input,
     ticket_hash,
     checked_in: false,
     checked_in_at: null,
@@ -175,7 +173,14 @@ export async function checkInGuest(hash: string): Promise<CheckInResult> {
   const guests = await localReadAll();
   const guest = guests.find((g) => g.ticket_hash === hash);
   if (!guest) {
-    return { status: "not_found", guest_name: null, guest_email: null, at: null };
+    return {
+      status: "not_found",
+      guest_name: null,
+      guest_email: null,
+      at: null,
+      guest_category: null,
+      after_party: null,
+    };
   }
   if (guest.checked_in) {
     return {
@@ -183,6 +188,8 @@ export async function checkInGuest(hash: string): Promise<CheckInResult> {
       guest_name: guest.name,
       guest_email: guest.email,
       at: guest.checked_in_at,
+      guest_category: guest.category ?? "regular",
+      after_party: guest.attending_after_party ?? false,
     };
   }
   guest.checked_in = true;
@@ -193,5 +200,7 @@ export async function checkInGuest(hash: string): Promise<CheckInResult> {
     guest_name: guest.name,
     guest_email: guest.email,
     at: guest.checked_in_at,
+    guest_category: guest.category ?? "regular",
+    after_party: guest.attending_after_party ?? false,
   };
 }
