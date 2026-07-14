@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createGuest } from "@/lib/db";
 import { sendTicketEmail, type EmailOutcome } from "@/lib/email";
+import { sendTicketWhatsapp, type WhatsappOutcome } from "@/lib/whatsapp";
 import { GUEST_TITLES, type GuestTitle } from "@/lib/types";
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -69,15 +70,25 @@ export async function POST(req: Request) {
       category,
     });
 
-    // New RSVPs get their ticket by email. Existing ones don't get a
-    // re-send (their ticket page shows everything); sendTicketEmail never
-    // throws, so a mail outage can't block the RSVP itself.
+    // New RSVPs get their ticket by email and WhatsApp. Existing ones don't
+    // get a re-send (their ticket page shows everything); neither sender
+    // ever throws, and the two run independently so an outage in one
+    // channel can't block the other or the RSVP itself.
     let emailed: EmailOutcome | "skipped" = "skipped";
+    let whatsapped: WhatsappOutcome | "skipped" = "skipped";
     if (!existing) {
-      emailed = await sendTicketEmail(guest);
+      [emailed, whatsapped] = await Promise.all([
+        sendTicketEmail(guest),
+        sendTicketWhatsapp(guest),
+      ]);
     }
 
-    return NextResponse.json({ ticket_hash: guest.ticket_hash, existing, emailed });
+    return NextResponse.json({
+      ticket_hash: guest.ticket_hash,
+      existing,
+      emailed,
+      whatsapped,
+    });
   } catch (err) {
     console.error("[api/rsvp]", err);
     return NextResponse.json(

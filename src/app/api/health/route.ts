@@ -11,6 +11,8 @@ export async function GET() {
     ADMIN_PASSWORD: Boolean(process.env.ADMIN_PASSWORD),
     RESEND_API_KEY: Boolean(process.env.RESEND_API_KEY),
     EMAIL_FROM: Boolean(process.env.EMAIL_FROM),
+    WABLAS_BASE_URL: Boolean(process.env.WABLAS_BASE_URL),
+    WABLAS_TOKEN: Boolean(process.env.WABLAS_TOKEN),
     APP_URL: Boolean(process.env.APP_URL),
   };
 
@@ -57,8 +59,8 @@ export async function GET() {
     }
   }
 
-  // The RSVP flow only needs the database. Email is optional; without it,
-  // guests still get their ticket on the confirmation screen.
+  // The RSVP flow only needs the database. Email and WhatsApp are optional;
+  // without them, guests still get their ticket on the confirmation screen.
   const rsvpReady =
     database.configured &&
     database.guestsTable &&
@@ -75,6 +77,9 @@ export async function GET() {
       : "Database is configured but the schema is missing. Run supabase/migrations/0001_create_guests.sql then 0002_guest_details_and_vip.sql in the Supabase SQL editor.";
   } else if (!env.ADMIN_PASSWORD) {
     hint = "Set ADMIN_PASSWORD in Vercel so organizers can log in to /admin.";
+  } else if (!env.RESEND_API_KEY && !(env.WABLAS_BASE_URL && env.WABLAS_TOKEN)) {
+    hint =
+      "RSVP is ready, but no delivery channel is configured. Set RESEND_API_KEY (email) and/or WABLAS_BASE_URL + WABLAS_TOKEN (WhatsApp) so guests receive their ticket automatically.";
   } else {
     hint = "All set. RSVP, tickets, and check-in are ready.";
   }
