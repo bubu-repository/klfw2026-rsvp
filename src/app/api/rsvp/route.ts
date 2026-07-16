@@ -60,7 +60,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { guest, existing } = await createGuest({
+    const result = await createGuest({
       name,
       email,
       phone,
@@ -69,6 +69,20 @@ export async function POST(req: Request) {
       attending_after_party,
       category,
     });
+
+    // Half-matching identity: registered before, but with the other contact
+    // detail different. Refuse and say which one, so the guest re-enters the
+    // exact pair they registered with (and only then sees their QR again).
+    if (result.kind === "conflict") {
+      const error =
+        result.conflict === "phone_mismatch"
+          ? "This email is already registered with a different phone number. Enter the exact same email and phone number you used before to view your ticket."
+          : "This phone number is already registered with a different email. Enter the exact same email and phone number you used before to view your ticket.";
+      return NextResponse.json({ error }, { status: 409 });
+    }
+
+    const guest = result.guest;
+    const existing = result.kind === "existing";
 
     // New RSVPs get their ticket by email and WhatsApp. Existing ones don't
     // get a re-send (their ticket page shows everything); neither sender

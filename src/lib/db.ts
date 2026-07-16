@@ -2,7 +2,25 @@ import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
 import { supabaseAdmin } from "./supabase";
+import { normalizePhone } from "./whatsapp";
 import type { Guest, NewGuest, CheckInResult } from "./types";
+
+// Result of an RSVP attempt. A returning guest must present BOTH the email
+// and the phone number they registered with to get their existing ticket
+// back; matching on only one of the two is refused with a conflict, so a
+// stranger who happens to know someone's email can't pull up their QR.
+export type CreateGuestResult =
+  | { kind: "created" | "existing"; guest: Guest }
+  | { kind: "conflict"; conflict: "phone_mismatch" | "email_mismatch" };
+
+// Same person, differently typed number ("012 345 6789" vs "+60123456789")
+// must still count as the same phone.
+function samePhone(stored: string | null, input: string): boolean {
+  // Guests from before the phone field existed have nothing to compare
+  // against; their email match is the best identity we have.
+  if (!stored || !stored.trim()) return true;
+  return normalizePhone(stored) === normalizePhone(input);
+}
 
 const hasSupabase = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -50,22 +68,51 @@ async function localWriteAll(guests: Guest[]): Promise<void> {
 
 // ---------- Public data-access API ----------
 
-export async function createGuest(
-  input: NewGuest
-): Promise<{ guest: Guest; existing: boolean }> {
+export async function createGuest(input: NewGuest): Promise<CreateGuestResult> {
   const ticket_hash = newTicketHash();
 
   if (hasSupabase) {
     const sb = supabaseAdmin();
+
+    // 1. Known email? Then the phone must match too, or we refuse.
+    const { data: byEmail, error: emailErr } = await sb
+      .from("guests")
+      .select()
+      .ilike("email", input.email)
+      .maybeSingle();
+    if (emailErr) throw new Error(emailErr.message);
+    if (byEmail) {
+      return samePhone((byEmail as Guest).phone, input.phone)
+        ? { kind: "existing", guest: byEmail as Guest }
+        : { kind: "conflict", conflict: "phone_mismatch" };
+    }
+
+    // 2. New email but a known phone number belongs to someone else.
+    // Phones are stored as typed, so normalize-and-compare in code; the
+    // guest list is event-sized (hundreds), one column scan is cheap.
+    const { data: phones, error: phoneErr } = await sb
+      .from("guests")
+      .select("phone")
+      .not("phone", "is", null);
+    if (phoneErr) throw new Error(phoneErr.message);
+    const phoneTaken = (phones as { phone: string }[]).some(
+      (p) =>
+        p.phone.trim() !== "" &&
+        normalizePhone(p.phone) === normalizePhone(input.phone)
+    );
+    if (phoneTaken) return { kind: "conflict", conflict: "email_mismatch" };
+
+    // 3. Genuinely new guest.
     const { data, error } = await sb
       .from("guests")
       .insert({ ...input, ticket_hash })
       .select()
       .single();
+    if (!error) return { kind: "created", guest: data as Guest };
 
-    if (!error) return { guest: data as Guest, existing: false };
-
-    // Unique violation on lower(email): this person already has a ticket.
+    // Unique violation on lower(email): a concurrent RSVP with the same
+    // email won the race between our check and this insert. Re-apply the
+    // email+phone rule against the winning row.
     if (error.code === "23505") {
       const { data: found, error: findErr } = await sb
         .from("guests")
@@ -73,17 +120,32 @@ export async function createGuest(
         .ilike("email", input.email)
         .single();
       if (findErr || !found) throw new Error(findErr?.message ?? "Lookup failed");
-      return { guest: found as Guest, existing: true };
+      return samePhone((found as Guest).phone, input.phone)
+        ? { kind: "existing", guest: found as Guest }
+        : { kind: "conflict", conflict: "phone_mismatch" };
     }
     throw new Error(error.message);
   }
 
   warnLocal();
   const guests = await localReadAll();
-  const existing = guests.find(
+
+  const byEmail = guests.find(
     (g) => g.email.toLowerCase() === input.email.toLowerCase()
   );
-  if (existing) return { guest: existing, existing: true };
+  if (byEmail) {
+    return samePhone(byEmail.phone, input.phone)
+      ? { kind: "existing", guest: byEmail }
+      : { kind: "conflict", conflict: "phone_mismatch" };
+  }
+
+  const phoneTaken = guests.some(
+    (g) =>
+      g.phone &&
+      g.phone.trim() !== "" &&
+      normalizePhone(g.phone) === normalizePhone(input.phone)
+  );
+  if (phoneTaken) return { kind: "conflict", conflict: "email_mismatch" };
 
   const guest: Guest = {
     id: crypto.randomUUID(),
@@ -95,7 +157,7 @@ export async function createGuest(
   };
   guests.push(guest);
   await localWriteAll(guests);
-  return { guest, existing: false };
+  return { kind: "created", guest };
 }
 
 export async function getGuestByHash(hash: string): Promise<Guest | null> {
