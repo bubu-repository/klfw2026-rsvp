@@ -14,7 +14,9 @@ export async function GET(
 
   const png = await QRCode.toBuffer(guest.ticket_hash, {
     width: 440,
-    margin: 2,
+    // Full 4-module quiet zone: readers fail to detect the code at all when
+    // the PNG is viewed against a dark background with a thinner margin.
+    margin: 4,
     color: { dark: "#1d2bf0", light: "#ffffff" },
   });
 

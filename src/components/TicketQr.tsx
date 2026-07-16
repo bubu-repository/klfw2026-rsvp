@@ -32,6 +32,11 @@ export default function TicketQr({
           fgColor="#1d2bf0"
           bgColor="#ffffff"
           level="M"
+          // Quiet zone baked into the canvas. The downloaded PNG is exactly
+          // this canvas, and without the 4-module white margin QR readers
+          // fail to detect it at all when the file is viewed on a dark
+          // background (silent no-scan at the door).
+          marginSize={4}
           style={{ width: 224, height: 224 }}
         />
       </div>

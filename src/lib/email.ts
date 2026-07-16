@@ -180,7 +180,9 @@ export async function sendTicketEmail(guest: Guest): Promise<EmailOutcome> {
   try {
     const qrPng = await QRCode.toBuffer(guest.ticket_hash, {
       width: 440,
-      margin: 2,
+      // Full 4-module quiet zone so the attached PNG scans reliably even
+      // when viewed against a dark background.
+      margin: 4,
       color: { dark: "#1d2bf0", light: "#ffffff" },
     });
     const qrDataUri = `data:image/png;base64,${qrPng.toString("base64")}`;
