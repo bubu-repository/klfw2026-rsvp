@@ -5,7 +5,7 @@ import RsvpForm from "@/components/RsvpForm";
 export const metadata: Metadata = {
   title: "KLFW 2026 × Cultured by Todak — VIP RSVP",
   description:
-    "Kuala Lumpur Fashion Week 2026. Cultured by Todak presents Collection 1.0 “Battlescars”. VIP invitation, Friday 07.08.2026, Level 3, Isetan KLCC.",
+    "Kuala Lumpur Fashion Week 2026. Cultured by Todak presents Collection 1.0 “Battlescars”. VIP invitation, Friday 07.08.2026, Esplanade, KLCC Park.",
 };
 
 // VIP RSVP page, served at klfw-vip.culturedbytodak.com (see src/proxy.ts).
@@ -82,9 +82,9 @@ export default function VipEventPage() {
             Registration
           </p>
           <p className="label text-right text-sm sm:text-base">
-            Level 3,
+            Esplanade,
             <br />
-            Isetan KLCC
+            KLCC Park
           </p>
           <p className="label bg-black px-3 py-2 text-sm sm:text-base">
             6.00 PM
@@ -95,6 +95,8 @@ export default function VipEventPage() {
             7.00 PM
             <br />
             After party <span className="font-medium italic">ft. Juju</span>
+            <br />
+            Level 3, Isetan KLCC
           </p>
           <p className="label col-start-2 text-right text-sm sm:text-base">
             Invitation only

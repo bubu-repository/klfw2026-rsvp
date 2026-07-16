@@ -45,7 +45,7 @@ function ticketMessage(guest: Guest, ticketUrl: string): string {
   const shortCode = guest.ticket_hash.slice(0, 8).toUpperCase();
   const vip = guest.category === "vip" ? "🖤 *VIP*\n" : "";
   const afterParty = guest.attending_after_party
-    ? "🎉 After party ft. Juju: 7.00–10.00 PM\n"
+    ? "🎉 After party ft. Juju: 7.00–10.00 PM · Level 3, Isetan KLCC\n"
     : "";
 
   return (
@@ -56,7 +56,7 @@ function ticketMessage(guest: Guest, ticketUrl: string): string {
     `📅 Friday, 07.08.2026\n` +
     `🕠 Registration 5.00 PM · Runway 6.00 PM\n` +
     `${afterParty}` +
-    `📍 Level 3, Isetan KLCC, Kuala Lumpur\n\n` +
+    `📍 Esplanade, KLCC Park, Kuala Lumpur\n\n` +
     `Your ticket & QR code: ${ticketUrl}\n\n` +
     `Show the QR code above at registration.`
   );

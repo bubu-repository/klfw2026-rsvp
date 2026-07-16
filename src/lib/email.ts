@@ -23,7 +23,8 @@ const EVENT_START_UTC = "20260807T090000Z";
 const EVENT_END_UTC = "20260807T130000Z";
 const EVENT_END_AFTER_PARTY_UTC = "20260807T140000Z";
 const EVENT_TITLE = "KLFW 2026 x Cultured by Todak";
-const EVENT_LOCATION = "Level 3, Isetan KLCC, Kuala Lumpur";
+// Runway show venue; the after party is at Level 3, Isetan KLCC.
+const EVENT_LOCATION = "Esplanade, KLCC Park, Kuala Lumpur";
 
 function eventEnd(guest: Guest): string {
   return guest.attending_after_party ? EVENT_END_AFTER_PARTY_UTC : EVENT_END_UTC;
@@ -31,7 +32,7 @@ function eventEnd(guest: Guest): string {
 
 function eventDetails(guest: Guest, ticketUrl: string): string {
   const afterParty = guest.attending_after_party
-    ? " After party ft. Juju 7.00-10.00 PM."
+    ? " After party ft. Juju 7.00-10.00 PM at Level 3, Isetan KLCC."
     : "";
   return `Collection 1.0 "Battlescars". Registration 5.00 PM, runway show 6.00 PM.${afterParty} Invitation only.\nYour ticket: ${ticketUrl}`;
 }
@@ -120,7 +121,7 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
                 </td>
                 <td align="right" style="padding:16px 0 0;">
                   <p style="${label}color:#888888;font-size:10px;margin:0;">Venue</p>
-                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">Level 3, Isetan KLCC</p>
+                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">Esplanade, KLCC Park</p>
                 </td>
               </tr>
               <tr>
@@ -138,7 +139,7 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
                   <p style="${label}color:#888888;font-size:10px;margin:0;">After party ft. Juju</p>
                   <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">${
                     guest.attending_after_party
-                      ? "Yes · 7.00–10.00 PM"
+                      ? "Yes · 7.00–10.00 PM · Level 3, Isetan KLCC"
                       : "Not attending"
                   }</p>
                 </td>

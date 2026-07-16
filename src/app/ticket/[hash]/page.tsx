@@ -80,7 +80,7 @@ export default async function TicketPage({
           </div>
           <div className="text-right">
             <dt className="text-neutral-500">Venue</dt>
-            <dd>Level 3, Isetan KLCC</dd>
+            <dd>Esplanade, KLCC Park</dd>
           </div>
           <div>
             <dt className="text-neutral-500">Registration</dt>
@@ -94,7 +94,7 @@ export default async function TicketPage({
             <dt className="text-neutral-500">After party</dt>
             <dd>
               {guest.attending_after_party
-                ? "Yes · 7.00 PM"
+                ? "Yes · 7.00 PM · Level 3, Isetan KLCC"
                 : "Not attending"}
             </dd>
           </div>

@@ -68,9 +68,9 @@ export default function EventPage() {
           Registration
         </p>
         <p className="label text-klfw text-right text-sm sm:text-base">
-          Level 3,
+          Esplanade,
           <br />
-          Isetan KLCC
+          KLCC Park
         </p>
         <p className="label text-klfw text-sm sm:text-base">
           6.00 PM
@@ -81,6 +81,8 @@ export default function EventPage() {
           7.00 PM
           <br />
           After party <span className="font-medium italic">ft. Juju</span>
+          <br />
+          Level 3, Isetan KLCC
         </p>
         <p className="label text-klfw col-start-2 text-right text-sm sm:text-base">
           Invitation only

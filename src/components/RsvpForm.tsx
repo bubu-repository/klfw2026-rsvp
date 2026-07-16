@@ -176,7 +176,7 @@ export default function RsvpForm({
 
       <fieldset>
         <legend className={labelCls}>
-          After party — ft. Juju · 7.00–10.00 PM · Level 3, Isetan KLCC
+          After party ft. Juju · 7.00–10.00 PM · Level 3, Isetan KLCC
         </legend>
         <p
           className={`label mt-1 text-[10px] ${
