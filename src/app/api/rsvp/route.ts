@@ -115,7 +115,12 @@ export async function POST(req: Request) {
       whatsapped,
     });
   } catch (err) {
-    console.error("[api/rsvp]", err);
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    console.error("[api/rsvp] Error:", {
+      message: errorMsg,
+      stack: err instanceof Error ? err.stack : undefined,
+      category: category,
+    });
     return NextResponse.json(
       { error: "Something went wrong saving your RSVP. Please try again." },
       { status: 500 }

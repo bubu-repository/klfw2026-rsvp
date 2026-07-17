@@ -115,8 +115,20 @@ export async function createGuest(input: NewGuest): Promise<CreateGuestResult> {
     }
 
     // 4. Genuinely new guest. Generate QR and store.
-    const qrUrl = `${process.env.APP_URL}/ticket/${ticket_hash}`;
-    const qrBuffer = await QRCode.toBuffer(qrUrl, { margin: 4, width: 400 });
+    let qrBuffer: Buffer | null = null;
+    try {
+      const qrUrl = `${process.env.APP_URL}/ticket/${ticket_hash}`;
+      if (!qrUrl.startsWith("http")) {
+        throw new Error("APP_URL not configured correctly");
+      }
+      qrBuffer = await QRCode.toBuffer(qrUrl, { margin: 4, width: 400 });
+    } catch (qrErr) {
+      console.error("[db] QR generation failed:", qrErr);
+      throw new Error(
+        `QR code generation failed: ${qrErr instanceof Error ? qrErr.message : String(qrErr)}`
+      );
+    }
+
     const { data, error } = await sb
       .from("guests")
       .insert({ ...input, ticket_hash, qr_code: qrBuffer })
