@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import crypto from "crypto";
+import QRCode from "qrcode";
 import { supabaseAdmin } from "./supabase";
 import { normalizePhone } from "./whatsapp";
 import type { Guest, NewGuest, CheckInResult } from "./types";
@@ -102,10 +103,12 @@ export async function createGuest(input: NewGuest): Promise<CreateGuestResult> {
     );
     if (phoneTaken) return { kind: "conflict", conflict: "email_mismatch" };
 
-    // 3. Genuinely new guest.
+    // 3. Genuinely new guest. Generate QR and store.
+    const qrUrl = `${process.env.APP_URL}/ticket/${ticket_hash}`;
+    const qrBuffer = await QRCode.toBuffer(qrUrl, { margin: 4, width: 400 });
     const { data, error } = await sb
       .from("guests")
-      .insert({ ...input, ticket_hash })
+      .insert({ ...input, ticket_hash, qr_code: qrBuffer })
       .select()
       .single();
     if (!error) return { kind: "created", guest: data as Guest };
@@ -154,6 +157,7 @@ export async function createGuest(input: NewGuest): Promise<CreateGuestResult> {
     checked_in: false,
     checked_in_at: null,
     created_at: new Date().toISOString(),
+    // Local dev doesn't store qr_code (BYTEA); it's generated on-the-fly at /api/qr
   };
   guests.push(guest);
   await localWriteAll(guests);

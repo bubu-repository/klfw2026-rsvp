@@ -16,6 +16,7 @@ export type Guest = {
   checked_in: boolean;
   checked_in_at: string | null;
   created_at: string;
+  qr_code?: Buffer; // QR code PNG binary (optional, only selected when needed)
 };
 
 export type NewGuest = {
