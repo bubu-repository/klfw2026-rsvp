@@ -70,6 +70,17 @@ export async function POST(req: Request) {
       category,
     });
 
+    // Quota exceeded: this category has reached max capacity
+    if (result.kind === "quota_exceeded") {
+      const categoryLabel = result.category === "vip" ? "VIP" : "Regular";
+      return NextResponse.json(
+        {
+          error: `${categoryLabel} tickets are fully booked. Thank you for your interest!`,
+        },
+        { status: 429 }
+      );
+    }
+
     // Half-matching identity: registered before, but with the other contact
     // detail different. Refuse and say which one, so the guest re-enters the
     // exact pair they registered with (and only then sees their QR again).

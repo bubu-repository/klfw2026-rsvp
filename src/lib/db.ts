@@ -12,7 +12,8 @@ import type { Guest, NewGuest, CheckInResult } from "./types";
 // stranger who happens to know someone's email can't pull up their QR.
 export type CreateGuestResult =
   | { kind: "created" | "existing"; guest: Guest }
-  | { kind: "conflict"; conflict: "phone_mismatch" | "email_mismatch" };
+  | { kind: "conflict"; conflict: "phone_mismatch" | "email_mismatch" }
+  | { kind: "quota_exceeded"; category: string };
 
 // Same person, differently typed number ("012 345 6789" vs "+60123456789")
 // must still count as the same phone.
@@ -103,7 +104,17 @@ export async function createGuest(input: NewGuest): Promise<CreateGuestResult> {
     );
     if (phoneTaken) return { kind: "conflict", conflict: "email_mismatch" };
 
-    // 3. Genuinely new guest. Generate QR and store.
+    // 3. Check quota for this category (max 200 per category)
+    const { data: categoryCount, error: countErr } = await sb
+      .from("guests")
+      .select("id", { count: "exact" })
+      .eq("category", input.category);
+    if (countErr) throw new Error(countErr.message);
+    if ((categoryCount?.length ?? 0) >= 200) {
+      return { kind: "quota_exceeded", category: input.category };
+    }
+
+    // 4. Genuinely new guest. Generate QR and store.
     const qrUrl = `${process.env.APP_URL}/ticket/${ticket_hash}`;
     const qrBuffer = await QRCode.toBuffer(qrUrl, { margin: 4, width: 400 });
     const { data, error } = await sb
@@ -149,6 +160,12 @@ export async function createGuest(input: NewGuest): Promise<CreateGuestResult> {
       normalizePhone(g.phone) === normalizePhone(input.phone)
   );
   if (phoneTaken) return { kind: "conflict", conflict: "email_mismatch" };
+
+  // Check quota for this category (max 200 per category)
+  const categoryCount = guests.filter((g) => g.category === input.category).length;
+  if (categoryCount >= 200) {
+    return { kind: "quota_exceeded", category: input.category };
+  }
 
   const guest: Guest = {
     id: crypto.randomUUID(),
