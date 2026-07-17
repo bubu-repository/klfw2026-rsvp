@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { listGuests } from "@/lib/db";
+import QRCode from "qrcode";
 import ExcelJS from "exceljs";
 
 export async function GET(req: Request) {
@@ -38,7 +39,8 @@ export async function GET(req: Request) {
     };
 
     // Add guest rows
-    guests.forEach((guest, idx) => {
+    for (let idx = 0; idx < guests.length; idx++) {
+      const guest = guests[idx];
       const row = worksheet.addRow({
         name: guest.name,
         email: guest.email,
@@ -50,10 +52,17 @@ export async function GET(req: Request) {
         ticket_code: guest.ticket_hash.slice(0, 8).toUpperCase(),
       });
 
-      // Add QR code image if available
-      if (guest.qr_code && guest.qr_code.length > 0) {
+      // Add QR code image: from database or generate on-the-fly
+      let qrBuffer = guest.qr_code;
+      if (!qrBuffer || qrBuffer.length === 0) {
+        // Generate QR on-the-fly for guests without stored QR (legacy)
+        const qrUrl = `${process.env.APP_URL}/ticket/${guest.ticket_hash}`;
+        qrBuffer = await QRCode.toBuffer(qrUrl, { margin: 4, width: 400 });
+      }
+
+      if (qrBuffer && qrBuffer.length > 0) {
         const imageId = workbook.addImage({
-          buffer: guest.qr_code as any,
+          buffer: qrBuffer as any,
           extension: "png",
         });
         worksheet.addImage(imageId, {
@@ -62,7 +71,7 @@ export async function GET(req: Request) {
         });
         row.height = 85;
       }
-    });
+    }
 
     // Adjust row heights for header
     worksheet.getRow(1).height = 25;
