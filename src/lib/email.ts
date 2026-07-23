@@ -89,6 +89,7 @@ function ticketEmailHtml(guest: Guest): string {
         <tr>
           <td style="background:#1d2bf0;padding:24px;" align="center">
             <img src="${base}/brand/klfw-white.png" alt="Kuala Lumpur Fashion Week 2026" width="180" style="display:block;max-width:180px;height:auto;" />
+            <p style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#ffffff;font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:2px;margin:16px 0 0;">Cultured <span style="font-size:12px;letter-spacing:1px;">by</span> Todak</p>
           </td>
         </tr>
         <tr>
