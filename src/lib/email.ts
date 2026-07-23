@@ -87,9 +87,10 @@ function ticketEmailHtml(guest: Guest): string {
     <tr><td align="center">
       <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="width:480px;max-width:94%;background:#ffffff;border:4px solid #1d2bf0;">
         <tr>
-          <td style="background:#1d2bf0;padding:24px;" align="center">
-            <img src="${base}/brand/klfw-white.png" alt="Kuala Lumpur Fashion Week 2026" width="180" style="display:block;max-width:180px;height:auto;" />
-            <p style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#ffffff;font-size:22px;line-height:1;text-transform:uppercase;letter-spacing:2px;margin:16px 0 0;">Cultured <span style="font-size:12px;letter-spacing:1px;">by</span> Todak</p>
+          <td style="background:#1d2bf0;padding:30px 24px 26px;" align="center">
+            <img src="${base}/brand/klfw-white.png" alt="Kuala Lumpur Fashion Week 2026" width="172" style="display:block;margin:0 auto;max-width:172px;height:auto;" />
+            <p style="color:#8f9bff;font-size:15px;line-height:1;margin:16px 0;font-family:Arial,Helvetica,sans-serif;">&times;</p>
+            <p style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#ffffff;font-size:21px;line-height:1;text-transform:uppercase;letter-spacing:3px;margin:0;">Cultured <span style="font-family:Arial,Helvetica,sans-serif;font-weight:normal;font-size:12px;letter-spacing:1px;text-transform:lowercase;">by</span> Todak</p>
           </td>
         </tr>
         <tr>
