@@ -94,21 +94,33 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
           </td>
         </tr>
         <tr>
-          <td style="padding:28px 24px 8px;" align="center">
+          <td style="padding:30px 24px 6px;" align="center">
             ${
               guest.category === "vip"
-                ? `<p style="${label}display:inline-block;background:#000000;color:#ffffff;font-size:14px;letter-spacing:3px;padding:6px 22px;margin:0 0 10px;">VIP</p>`
+                ? `<p style="${label}display:inline-block;background:#000000;color:#ffffff;font-size:14px;letter-spacing:3px;padding:6px 22px;margin:0 0 14px;">VIP</p>`
                 : ""
             }
-            <p style="${label}color:#1d2bf0;font-size:13px;margin:0;">You are on the list</p>
-            <h1 style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#1d2bf0;font-size:26px;line-height:1.1;text-transform:uppercase;margin:10px 0 4px;">${guest.name}</h1>
+            <p style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#1d2bf0;font-size:44px;line-height:1;text-transform:uppercase;letter-spacing:1px;margin:0;">You&rsquo;re in.</p>
+            <h1 style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#111111;font-size:22px;line-height:1.1;text-transform:uppercase;margin:14px 0 4px;">${guest.name}</h1>
             <p style="${label}color:#888888;font-size:11px;margin:0;">Ticket ${shortCode}</p>
           </td>
         </tr>
         <tr>
-          <td align="center" style="padding:16px 24px;">
+          <td style="padding:20px 24px 6px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef0ff;border-left:5px solid #1d2bf0;">
+              <tr>
+                <td style="padding:16px 18px;">
+                  <p style="${label}color:#1d2bf0;font-size:12px;margin:0 0 6px;">📎 Your QR ticket is attached to this email</p>
+                  <p style="font-family:Arial,Helvetica,sans-serif;color:#333333;font-size:13px;line-height:1.55;margin:0;">Save the attached QR code (or the image below) and show it at registration. This is your entry pass, one per guest.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding:18px 24px 8px;">
             <img src="${qrDataUri}" alt="Your QR ticket (code ${shortCode})" width="220" height="220" style="display:block;border:3px solid #1d2bf0;padding:8px;background:#ffffff;" />
-            <p style="${label}color:#888888;font-size:10px;margin:10px 0 0;">Present this QR code at registration. The same code is attached as a PNG.</p>
+            <p style="${label}color:#888888;font-size:10px;margin:10px 0 0;">Present this QR code at registration</p>
           </td>
         </tr>
         <tr>
