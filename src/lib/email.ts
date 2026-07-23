@@ -77,7 +77,6 @@ function icsFile(guest: Guest, ticketUrl: string): string {
 function ticketEmailHtml(guest: Guest): string {
   const base = appUrl();
   const ticketUrl = `${base}/ticket/${guest.ticket_hash}`;
-  const shortCode = guest.ticket_hash.slice(0, 8).toUpperCase();
   const label =
     "font-family:Arial,Helvetica,sans-serif;font-weight:bold;text-transform:uppercase;letter-spacing:0.5px;";
 
@@ -93,33 +92,21 @@ function ticketEmailHtml(guest: Guest): string {
           </td>
         </tr>
         <tr>
-          <td style="padding:30px 24px 6px;" align="center">
-            ${
-              guest.category === "vip"
-                ? `<p style="${label}display:inline-block;background:#000000;color:#ffffff;font-size:14px;letter-spacing:3px;padding:6px 22px;margin:0 0 14px;">VIP</p>`
-                : ""
-            }
+          <td style="padding:34px 24px 8px;" align="center">
             <p style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#1d2bf0;font-size:44px;line-height:1;text-transform:uppercase;letter-spacing:1px;margin:0;">You&rsquo;re in.</p>
-            <h1 style="font-family:Arial Black,Arial,Helvetica,sans-serif;color:#111111;font-size:22px;line-height:1.1;text-transform:uppercase;margin:14px 0 4px;">${guest.name}</h1>
-            <p style="${label}color:#888888;font-size:11px;margin:0;">Ticket ${shortCode}</p>
+            <p style="${label}color:#111111;font-size:14px;margin:14px 0 0;">Your RSVP is confirmed</p>
           </td>
         </tr>
         <tr>
-          <td style="padding:20px 24px 6px;">
+          <td style="padding:22px 24px 8px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef0ff;border-left:5px solid #1d2bf0;">
               <tr>
-                <td style="padding:16px 18px;">
-                  <p style="${label}color:#1d2bf0;font-size:12px;margin:0 0 6px;">📎 Your QR ticket is attached to this email</p>
-                  <p style="font-family:Arial,Helvetica,sans-serif;color:#333333;font-size:13px;line-height:1.55;margin:0;">Save the attached QR code (or the image below) and show it at registration. This is your entry pass, one per guest.</p>
+                <td style="padding:18px 20px;">
+                  <p style="${label}color:#1d2bf0;font-size:13px;margin:0 0 8px;">📎 Your QR ticket is attached to this email</p>
+                  <p style="font-family:Arial,Helvetica,sans-serif;color:#333333;font-size:13px;line-height:1.55;margin:0;">Look for the attachment <strong>klfw2026-ticket-qr.png</strong>. Save it and show it at registration, it is your entry pass. One ticket per guest.</p>
                 </td>
               </tr>
             </table>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:18px 24px 8px;">
-            <img src="${base}/api/qr/${guest.ticket_hash}" alt="Your QR ticket (code ${shortCode})" width="220" height="220" style="display:block;border:3px solid #1d2bf0;padding:8px;background:#ffffff;" />
-            <p style="${label}color:#888888;font-size:10px;margin:10px 0 0;">Present this QR code at registration</p>
           </td>
         </tr>
         <tr>
@@ -148,15 +135,11 @@ function ticketEmailHtml(guest: Guest): string {
               <tr>
                 <td style="padding:12px 0 0;">
                   <p style="${label}color:#888888;font-size:10px;margin:0;">After party ft. Juju</p>
-                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">${
-                    guest.attending_after_party
-                      ? "Yes · 7.00–10.00 PM · Level 3, Isetan KLCC"
-                      : "Not attending"
-                  }</p>
+                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">7.00–10.00 PM</p>
                 </td>
                 <td align="right" style="padding:12px 0 0;">
-                  <p style="${label}color:#888888;font-size:10px;margin:0;">Company</p>
-                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">${guest.company ?? "—"}</p>
+                  <p style="${label}color:#888888;font-size:10px;margin:0;">After party venue</p>
+                  <p style="${label}color:#1d2bf0;font-size:12px;margin:2px 0 0;">Level 3, Isetan KLCC</p>
                 </td>
               </tr>
             </table>
