@@ -146,12 +146,7 @@ function ticketEmailHtml(guest: Guest): string {
           </td>
         </tr>
         <tr>
-          <td align="center" style="padding:0 24px 12px;">
-            <a href="${ticketUrl}" style="${label}display:inline-block;background:#1d2bf0;color:#ffffff;font-size:14px;text-decoration:none;padding:14px 28px;">View my ticket</a>
-          </td>
-        </tr>
-        <tr>
-          <td align="center" style="padding:0 24px 28px;">
+          <td align="center" style="padding:8px 24px 28px;">
             <a href="${googleCalendarUrl(guest, ticketUrl)}" style="${label}display:inline-block;border:2px solid #1d2bf0;color:#1d2bf0;font-size:12px;text-decoration:none;padding:11px 22px;">Add to Google Calendar</a>
             <p style="${label}color:#888888;font-size:9px;margin:10px 0 0;">Apple or Outlook calendar: open the attached klfw2026.ics</p>
           </td>
