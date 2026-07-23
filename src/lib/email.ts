@@ -74,7 +74,7 @@ function icsFile(guest: Guest, ticketUrl: string): string {
   ].join("\r\n");
 }
 
-function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
+function ticketEmailHtml(guest: Guest): string {
   const base = appUrl();
   const ticketUrl = `${base}/ticket/${guest.ticket_hash}`;
   const shortCode = guest.ticket_hash.slice(0, 8).toUpperCase();
@@ -88,9 +88,8 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
     <tr><td align="center">
       <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="width:480px;max-width:94%;background:#ffffff;border:4px solid #1d2bf0;">
         <tr>
-          <td style="background:#1d2bf0;padding:20px 24px;" align="center">
+          <td style="background:#1d2bf0;padding:24px;" align="center">
             <img src="${base}/brand/klfw-white.png" alt="Kuala Lumpur Fashion Week 2026" width="180" style="display:block;max-width:180px;height:auto;" />
-            <img src="${base}/brand/todak-white.png" alt="Cultured by Todak" width="120" style="display:block;max-width:120px;height:auto;margin-top:14px;" />
           </td>
         </tr>
         <tr>
@@ -119,7 +118,7 @@ function ticketEmailHtml(guest: Guest, qrDataUri: string): string {
         </tr>
         <tr>
           <td align="center" style="padding:18px 24px 8px;">
-            <img src="${qrDataUri}" alt="Your QR ticket (code ${shortCode})" width="220" height="220" style="display:block;border:3px solid #1d2bf0;padding:8px;background:#ffffff;" />
+            <img src="${base}/api/qr/${guest.ticket_hash}" alt="Your QR ticket (code ${shortCode})" width="220" height="220" style="display:block;border:3px solid #1d2bf0;padding:8px;background:#ffffff;" />
             <p style="${label}color:#888888;font-size:10px;margin:10px 0 0;">Present this QR code at registration</p>
           </td>
         </tr>
@@ -198,8 +197,10 @@ export async function sendTicketEmail(guest: Guest): Promise<EmailOutcome> {
       margin: 4,
       color: { dark: "#1d2bf0", light: "#ffffff" },
     });
-    const qrDataUri = `data:image/png;base64,${qrPng.toString("base64")}`;
-    const html = ticketEmailHtml(guest, qrDataUri);
+    // The inline QR <img> loads from ${APP_URL}/api/qr/[hash]; email clients
+    // like Gmail strip base64 data: URIs, so a hosted URL is what actually
+    // renders. The same PNG is still attached below as a download.
+    const html = ticketEmailHtml(guest);
     const subject = "Your KLFW 2026 ticket: Cultured by Todak, Friday 07.08.2026";
     const ticketUrl = `${appUrl()}/ticket/${guest.ticket_hash}`;
     const ics = icsFile(guest, ticketUrl);
