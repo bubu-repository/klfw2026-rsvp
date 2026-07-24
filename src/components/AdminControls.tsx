@@ -20,13 +20,9 @@ export default function AdminControls() {
   async function exportGuests() {
     setExporting(true);
     try {
-      const pwd = prompt("Enter admin password to export:");
-      if (!pwd) return;
-      const res = await fetch(
-        `/api/admin/export-guests?password=${encodeURIComponent(pwd)}`
-      );
+      const res = await fetch("/api/admin/export-guests");
       if (!res.ok) {
-        alert("Export failed. Check password.");
+        alert("Export failed. Please try again.");
         return;
       }
       const blob = await res.blob();
@@ -44,13 +40,9 @@ export default function AdminControls() {
   async function exportQRZip() {
     setExporting(true);
     try {
-      const pwd = prompt("Enter admin password to export:");
-      if (!pwd) return;
-      const res = await fetch(
-        `/api/admin/export-qr-zips?password=${encodeURIComponent(pwd)}`
-      );
+      const res = await fetch("/api/admin/export-qr-zips");
       if (!res.ok) {
-        alert("Export failed. Check password.");
+        alert("Export failed. Please try again.");
         return;
       }
       const blob = await res.blob();

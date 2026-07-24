@@ -114,14 +114,13 @@ export async function createGuest(input: NewGuest): Promise<CreateGuestResult> {
       return { kind: "quota_exceeded", category: input.category };
     }
 
-    // 4. Genuinely new guest. Generate QR and store.
+    // 4. Genuinely new guest. Store a QR of the raw ticket_hash: that is
+    // exactly what the door scanner decodes. Encoding a URL here would make
+    // the stored QR unscannable and inconsistent with the ticket page and
+    // the emailed attachment, which both encode the bare hash.
     let qrBuffer: Buffer | null = null;
     try {
-      const qrUrl = `${process.env.APP_URL}/ticket/${ticket_hash}`;
-      if (!qrUrl.startsWith("http")) {
-        throw new Error("APP_URL not configured correctly");
-      }
-      qrBuffer = await QRCode.toBuffer(qrUrl, { margin: 4, width: 400 });
+      qrBuffer = await QRCode.toBuffer(ticket_hash, { margin: 4, width: 400 });
     } catch (qrErr) {
       console.error("[db] QR generation failed:", qrErr);
       throw new Error(
